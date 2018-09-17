@@ -50,11 +50,11 @@ for i in $(ls $(pwd) | grep $TEST_PATTERN | grep ".*\\.c");
 do
         OUT=$(echo $i | sed s,\\.c,,);
         gcc $(ls | grep -v $TEST_PATTERN | grep $C_PATTERN ) $i -ansi -pedantic-errors -Wall -fstack-protector-all -Werror -Wshadow -g -o $OUT;
-        if [ "$DEBUG" == true ]; then
+        if [ "$DEBUG" = true ]; then
                 echo -e "-----Running $OUT-----\n";
                 stdout=$($OUT);
                 exc=$?;
-		if [ $VERBOSE == true ]; then
+		if [ $VERBOSE = true ]; then
 			echo $stdout;
 			echo -e "\n";
 		fi
@@ -81,18 +81,24 @@ do
         progout=$($OUT < $i);
         exc=$?;
 
-        if [ $VERBOSE == true ]; then
+        if [ "$VERBOSE" = "true" ]; then
             echo -e "\n-----VERBOSE OUTPUT-----\n";
-            echo $progout;
+            echo "$progout";
             echo -e "\n-----END OUTPUT-----\n";
         fi
 
         if [ $exc == 0 ]; then
-            if [[ -z $(echo $progout | diff - $OPF) ]]; then
-                echo "Test $OPF passed.";
+            if [[ -e "$OPF" ]]; then
+                if [[ -z $(echo "$progout" | diff - $OPF) ]]; then
+                    echo "Test $OPF passed.";
+                else
+                    echo "Test $OPF failed.  Your output (left), expected output (right).\n";
+                    echo $(echo "$progout" | diff - $OPF -y);
+                fi
             else
-                echo "Test $OPF failed.  Your output (left), expected output (right).\n";
-                echo $(echo $progout | diff - $OPF);
+                echo -e "File $OPF does not exist.  Cannot check your output, but here it is: \n"
+                echo "$progout";
+                echo -e "\n-----END OUTPUT-----";
             fi
 
         else
