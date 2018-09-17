@@ -11,7 +11,7 @@ function usage {
 
 
 function clean {
-	for i in $(ls | grep $PUB_PATTERN | grep -v $TEST_PATTERN); do
+	for i in $(ls | grep $PUB_PATTERN | grep -v $TEST_PATTERN | grep -v $IN_PATTERN | grep -v $OUT_PATTERN); do
 		rm -f $i;
 	done
 	echo Project directory cleaned.
