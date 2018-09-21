@@ -18,7 +18,7 @@ function clean {
 }
 
 
-PUB_PATTERN="^public[1-9]\{1,2\}";
+PUB_PATTERN="^public[0-9]\{1,2\}";
 TEST_PATTERN="$PUB_PATTERN\\.c";
 IN_PATTERN="^.*\\.input";
 OUT_PATTERN="^.*\\.output";
@@ -46,8 +46,9 @@ do
         esac
 done
 
-for i in $(ls $(pwd) | grep $TEST_PATTERN | grep ".*\\.c");
+for i in $(ls $(pwd) | grep $TEST_PATTERN);
 do
+        echo $i;
         OUT=$(echo $i | sed s,\\.c,,);
         gcc $(ls | grep -v $TEST_PATTERN | grep $C_PATTERN ) $i -ansi -pedantic-errors -Wall -fstack-protector-all -Werror -Wshadow -g -o $OUT;
         if [ "$DEBUG" = true ]; then
@@ -68,7 +69,7 @@ do
         fi
 done
 
-
+echo "Second compile!"
 OUT=$(ls $(pwd) | grep $C_PATTERN | grep -v $TEST_PATTERN | sed s,\\.c,,);
 gcc $(ls | grep -v $TEST_PATTERN | grep $C_PATTERN ) $i -ansi -pedantic-errors -Wall -fstack-protector-all -Werror -Wshadow -g -o $OUT;
 
