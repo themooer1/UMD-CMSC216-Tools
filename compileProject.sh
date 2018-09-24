@@ -19,10 +19,14 @@ function clean {
 
 
 PUB_PATTERN="^public[0-9]\{1,2\}";
-TEST_PATTERN="$PUB_PATTERN\\.c";
+STU_PATTERN="^student[0-9]\{1,2\}";
+TEST_PATTERN="\($PUB_PATTERN\)\|\($STU_PATTERN\)\.c";
 IN_PATTERN="^.*\\.input";
 OUT_PATTERN="^.*\\.output";
 C_PATTERN=".*\\.c";
+
+echo $TEST_PATTERN
+echo $(ls | grep $TEST_PATTERN)
 
 for arg in "$@";
 do
@@ -55,11 +59,11 @@ do
                 echo -e "-----Running $OUT-----\n";
                 stdout=$($OUT);
                 exc=$?;
-		if [ $VERBOSE = true ]; then
+		if [ "$VERBOSE" = true ]; then
 			echo $stdout;
 			echo -e "\n";
 		fi
-                if [ $exc == 0 ]; then
+                if [ "$exc" == 0 ]; then
                         echo "Test of $OUT suceeded.";
                 else
                         echo "Test of $OUT failed.";
@@ -69,7 +73,6 @@ do
         fi
 done
 
-echo "Second compile!"
 OUT=$(ls $(pwd) | grep $C_PATTERN | grep -v $TEST_PATTERN | sed s,\\.c,,);
 gcc $(ls | grep -v $TEST_PATTERN | grep $C_PATTERN ) $i -ansi -pedantic-errors -Wall -fstack-protector-all -Werror -Wshadow -g -o $OUT;
 
